@@ -45,6 +45,7 @@ dependencies:
 
   iconsax: ^0.0.8
   iconsax_plus: ^1.0.0
+  bloc: ^9.1.0
 
 dev_dependencies:
   flutter_test:

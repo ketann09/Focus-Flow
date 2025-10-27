@@ -2,28 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focus_flow/auth/bloc/auth_bloc.dart';
 import 'package:focus_flow/auth/login/login_cubit.dart';
-import 'package:focus_flow/auth/screens/signup_screen.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class SignUpScreen extends StatelessWidget {
+  const SignUpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => LoginCubit(context.read<AuthBloc>()),
-      child: const LoginView(),
+      child: const SignUpView(),
     );
   }
 }
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class SignUpView extends StatefulWidget {
+  const SignUpView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<SignUpView> createState() => _SignUpViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _SignUpViewState extends State<SignUpView> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -46,6 +45,9 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Create Account'),
+      ),
       body: BlocListener<LoginCubit, LoginState>(
         listener: (context, state) {
           if (state is LoginFailure) {
@@ -62,7 +64,7 @@ class _LoginViewState extends State<LoginView> {
                 Icon(Icons.timer, size: 80, color: Theme.of(context).primaryColor),
                 const SizedBox(height: 16),
                 const Text(
-                  'Welcome back to FocusFlow',
+                  'Get Started with FocusFlow',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
@@ -81,7 +83,7 @@ class _LoginViewState extends State<LoginView> {
                   controller: _passwordController,
                   obscureText: true,
                   decoration: const InputDecoration(
-                    labelText: 'Password',
+                    labelText: 'Password (min. 6 chars)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.lock),
                   ),
@@ -95,7 +97,7 @@ class _LoginViewState extends State<LoginView> {
                     }
                     return ElevatedButton(
                       onPressed: () {
-                        context.read<LoginCubit>().login(
+                        context.read<LoginCubit>().signup(
                               _emailController.text.trim(),
                               _passwordController.text.trim(),
                             );
@@ -103,18 +105,16 @@ class _LoginViewState extends State<LoginView> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: const Text('Login', style: TextStyle(fontSize: 16)),
+                      child: const Text('Sign Up', style: TextStyle(fontSize: 16)),
                     );
                   },
                 ),
                 const SizedBox(height: 12),
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const SignUpScreen()),
-                    );
+                    Navigator.of(context).pop();
                   },
-                  child: const Text('Don\'t have an account? Sign Up'),
+                  child: const Text('Already have an account? Login'),
                 ),
               ],
             ),
