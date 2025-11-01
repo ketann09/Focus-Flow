@@ -34,24 +34,22 @@ class _SignUpViewState extends State<SignUpView> {
   }
 
   void _showErrorDialog(String error) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(error),
-        backgroundColor: Colors.red,
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(error), backgroundColor: Colors.red));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Account'),
-      ),
+      appBar: AppBar(title: const Text('Create Account')),
       body: BlocListener<LoginCubit, LoginState>(
         listener: (context, state) {
           if (state is LoginFailure) {
             _showErrorDialog(state.error);
+          }
+          if (state is LoginSuccess) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
           }
         },
         child: Center(
@@ -61,7 +59,11 @@ class _SignUpViewState extends State<SignUpView> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Icon(Icons.timer, size: 80, color: Theme.of(context).primaryColor),
+                Icon(
+                  Icons.timer,
+                  size: 80,
+                  color: Theme.of(context).primaryColor,
+                ),
                 const SizedBox(height: 16),
                 const Text(
                   'Get Started with FocusFlow',
@@ -89,7 +91,7 @@ class _SignUpViewState extends State<SignUpView> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                
+
                 BlocBuilder<LoginCubit, LoginState>(
                   builder: (context, state) {
                     if (state is LoginLoading) {
@@ -98,14 +100,17 @@ class _SignUpViewState extends State<SignUpView> {
                     return ElevatedButton(
                       onPressed: () {
                         context.read<LoginCubit>().signup(
-                              _emailController.text.trim(),
-                              _passwordController.text.trim(),
-                            );
+                          _emailController.text.trim(),
+                          _passwordController.text.trim(),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: const Text('Sign Up', style: TextStyle(fontSize: 16)),
+                      child: const Text(
+                        'Sign Up',
+                        style: TextStyle(fontSize: 16),
+                      ),
                     );
                   },
                 ),
