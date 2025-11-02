@@ -47,8 +47,14 @@ class TaskRepository {
       return;
     }
 
-    await _db.collection('tasks').doc(id).update(
-      task.toJson(),
-    );
+    await _db.collection('tasks').doc(id).update(task.toJson());
+  }
+
+  Future<void> deleteTask(String taskId) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null || taskId.isEmpty) {
+      return;
+    }
+    await _db.collection('tasks').doc(taskId).delete();
   }
 }

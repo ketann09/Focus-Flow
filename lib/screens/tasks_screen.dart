@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focus_flow/models/task_model.dart';
 import 'package:focus_flow/repositories/task_repository.dart';
 import 'package:focus_flow/tasks/bloc/task_bloc.dart';
+import 'package:iconsax/iconsax.dart';
 
 class TasksScreen extends StatelessWidget {
   const TasksScreen({super.key});
@@ -39,7 +40,7 @@ class _TasksViewState extends State<TasksView> {
     if (title.isNotEmpty) {
       context.read<TaskBloc>().add(AddTask(title));
       _taskController.clear();
-      FocusScope.of(context).unfocus(); 
+      FocusScope.of(context).unfocus();
     }
   }
 
@@ -75,7 +76,6 @@ class _TasksViewState extends State<TasksView> {
             ),
           ),
 
-          
           Expanded(
             child: BlocBuilder<TaskBloc, TaskState>(
               builder: (context, state) {
@@ -86,31 +86,52 @@ class _TasksViewState extends State<TasksView> {
                   if (state.tasks.isEmpty) {
                     return const Center(child: Text('No tasks yet.'));
                   }
-                  
+
                   return ListView.builder(
                     itemCount: state.tasks.length,
                     itemBuilder: (context, index) {
                       final task = state.tasks[index];
-                      
-                      return CheckboxListTile(
-                        title: Text(
-                          task.title,
-                          style: TextStyle(
-                            decoration: task.isCompleted
-                                ? TextDecoration.lineThrough
-                                : TextDecoration.none,
-                          ),
-                        ),
-                        value: task.isCompleted,
-                        onChanged: (isChecked) {
-                          final updatedTask = Task(
-                            id: task.id,
-                            title: task.title,
-                            userId: task.userId,
-                            isCompleted: isChecked ?? false,
-                          );
-                          context.read<TaskBloc>().add(UpdateTask(updatedTask));
+
+                      return Dismissible(
+                        key: Key(task.id),
+                        direction: DismissDirection.endToStart,
+
+                        onDismissed: (direction) {
+                          context.read<TaskBloc>().add(DeleteTask(task.id));
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('${task.title} deleted' ))
+                            );
                         },
+
+                        background:Container(
+                          color: Colors.red,
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.symmetric(horizontal:20 ),
+                          child: const Icon(Iconsax.profile_delete, color: Colors.red),
+                        ) ,
+                        child: CheckboxListTile(
+                          title: Text(
+                            task.title,
+                            style: TextStyle(
+                              decoration: task.isCompleted
+                                  ? TextDecoration.lineThrough
+                                  : TextDecoration.none,
+                            ),
+                          ),
+                          value: task.isCompleted,
+                          onChanged: (isChecked) {
+                            final updatedTask = Task(
+                              id: task.id,
+                              title: task.title,
+                              userId: task.userId,
+                              isCompleted: isChecked ?? false,
+                            );
+                            context.read<TaskBloc>().add(
+                              UpdateTask(updatedTask),
+                            );
+                          },
+                        ),
                       );
                     },
                   );
