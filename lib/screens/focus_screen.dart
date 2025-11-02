@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:focus_flow/repositories/session_repository.dart';
 import 'package:focus_flow/timer/bloc/timer_bloc.dart';
 
 class FocusScreen extends StatelessWidget {
@@ -8,7 +9,10 @@ class FocusScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => TimerBloc(),
+      create: (context) => TimerBloc(
+        
+        sessionRepository: RepositoryProvider.of<SessionRepository>(context),
+      )..add(TimerReset()), 
       child: const FocusView(),
     );
   }

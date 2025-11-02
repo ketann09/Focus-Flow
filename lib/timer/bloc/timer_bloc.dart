@@ -1,24 +1,31 @@
-import 'dart:async'; 
+import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:focus_flow/services/settings_service.dart'; 
+import 'package:focus_flow/models/session_model.dart';
+import 'package:focus_flow/repositories/session_repository.dart';
+import 'package:focus_flow/services/settings_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:uuid/uuid.dart';
 part 'timer_event.dart';
 part 'timer_state.dart';
 
 class TimerBloc extends Bloc<TimerEvent, TimerState> {
   final SettingsService _settingsService;
+  final SessionRepository _sessionRepository;
   StreamSubscription<int>? _tickerSubscription;
-  int _initialDuration = 25 * 60; 
+  int _initialDuration = 25 * 60;
 
   static const int _tickDuration = 1;
   Stream<int> _tick() {
     return Stream.periodic(const Duration(seconds: _tickDuration), (x) => x);
   }
 
-  TimerBloc({SettingsService? settingsService})
-      : _settingsService = settingsService ?? SettingsService(),
-        super(const TimerState()) {
-    
+  TimerBloc({
+    SettingsService? settingsService,
+    required SessionRepository sessionRepository,
+  }) : _settingsService = settingsService ?? SettingsService(),
+       _sessionRepository = sessionRepository,
+       super(const TimerState()) {
     on<TimerStarted>(_onStarted);
     on<TimerPaused>(_onPaused);
     on<TimerResumed>(_onResumed);
@@ -30,8 +37,8 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
 
   Future<void> _loadInitialDuration() async {
     final workMinutes = await _settingsService.getWorkDuration();
-    _initialDuration = workMinutes * 60; 
-    add(TimerReset());
+    _initialDuration = workMinutes * 60;
+    
   }
 
   @override
@@ -73,6 +80,26 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
     } else {
       _tickerSubscription?.cancel();
       emit(state.copyWith(status: TimerStatus.finished));
+
+      _logSession();
+    }
+  }
+
+  Future<void> _logSession() async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) return;
+
+    final session = Session(
+      id: const Uuid().v4(),
+      userId: userId,
+      timestamp: DateTime.now(),
+      durationInSeconds: _initialDuration,
+    );
+
+    try {
+      await _sessionRepository.addSession(session);
+    } catch (e) {
+      print("error Logging session");
     }
   }
 }
