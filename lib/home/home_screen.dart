@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focus_flow/auth/bloc/auth_bloc.dart';
 import 'package:focus_flow/screens/history_screen.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:focus_flow/screens/dashboard_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const List<Widget> _widgetOptions = <Widget>[
     FocusScreen(),
     TasksScreen(),
-    HistoryScreen(),
+    DashboardScreen(),
     SettingsScreen(),
   ];
 
@@ -49,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.timer), label: 'Focus'),
           BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Tasks'),
-          BottomNavigationBarItem(icon: Icon(Iconsax.clock),label: 'History'),
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard),label: 'Dashboard'),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Settings',
