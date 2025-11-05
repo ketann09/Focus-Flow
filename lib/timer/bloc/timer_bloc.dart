@@ -13,7 +13,8 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
   final SettingsService _settingsService;
   final SessionRepository _sessionRepository;
   StreamSubscription<int>? _tickerSubscription;
-  int _initialDuration = 25 * 60;
+  int _initialWorkDuration = 25 * 60;
+  int _initialBreakDuration = 5 * 60;
 
   static const int _tickDuration = 1;
   Stream<int> _tick() {
@@ -25,20 +26,22 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
     required SessionRepository sessionRepository,
   }) : _settingsService = settingsService ?? SettingsService(),
        _sessionRepository = sessionRepository,
-       super(const TimerState()) {
+       super(TimerState(duration: 25 * 60)) {
     on<TimerStarted>(_onStarted);
     on<TimerPaused>(_onPaused);
     on<TimerResumed>(_onResumed);
     on<TimerReset>(_onReset);
     on<_TimerTicked>(_onTicked);
 
-    _loadInitialDuration();
+    _loadDuration();
   }
 
-  Future<void> _loadInitialDuration() async {
-    final workMinutes = await _settingsService.getWorkDuration();
-    _initialDuration = workMinutes * 60;
-    
+  Future<void> _loadDuration() async {
+    _initialWorkDuration = (await _settingsService.getWorkDuration()) * 60;
+    _initialBreakDuration = (await _settingsService.getBreakDuration()) * 60;
+    if (state.pomodoroStatus == PomodoroStatus.work) {
+      add(TimerReset());
+    }
   }
 
   @override
@@ -71,21 +74,52 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
 
   void _onReset(TimerReset event, Emitter<TimerState> emit) {
     _tickerSubscription?.cancel();
-    emit(TimerState(status: TimerStatus.initial, duration: _initialDuration));
+    emit(
+      TimerState(
+        status: TimerStatus.initial,
+        pomodoroStatus: PomodoroStatus.work,
+        duration: _initialWorkDuration,
+      ),
+    );
   }
 
-  void _onTicked(_TimerTicked event, Emitter<TimerState> emit) {
+  // CORRECTED _onTicked METHOD
+void _onTicked(_TimerTicked event, Emitter<TimerState> emit) {
     if (event.duration > 0) {
       emit(state.copyWith(duration: event.duration));
-    } else {
-      _tickerSubscription?.cancel();
-      emit(state.copyWith(status: TimerStatus.finished));
+      } else {
+       // Timer finished
+       _tickerSubscription?.cancel();
 
-      _logSession();
-    }
-  }
+        if (state.pomodoroStatus == PomodoroStatus.work) {
+         // --- WORK FINISHED ---
+         // 1. Log the completed work session
+         _logSession(_initialWorkDuration);
 
-  Future<void> _logSession() async {
+         // 2. Emit a new state to prepare for the break
+         emit(state.copyWith(
+           pomodoroStatus: PomodoroStatus.breakTime,
+           duration: _initialBreakDuration,
+         ));
+
+         // 3. Automatically start the break timer
+         add(const TimerStarted());
+
+       } else {
+         // --- BREAK FINISHED ---
+         // 1. Emit a new state to prepare for work
+         emit(state.copyWith(
+           pomodoroStatus: PomodoroStatus.work,
+           duration: _initialWorkDuration,
+         ));
+
+         // 2. Automatically start the work timer
+         add(const TimerStarted());
+       }
+     }
+   }
+
+  Future<void> _logSession(int durationInSeconds) async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
 
@@ -93,13 +127,13 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
       id: const Uuid().v4(),
       userId: userId,
       timestamp: DateTime.now(),
-      durationInSeconds: _initialDuration,
+      durationInSeconds: durationInSeconds,
     );
 
     try {
       await _sessionRepository.addSession(session);
     } catch (e) {
-      print("error Logging session");
+      print("error Logging session: $e");
     }
   }
 }

@@ -10,7 +10,7 @@ class AnalyticsState extends Equatable {
   });
 
   final AnalyticsStatus status;
-  final int totalFocusTimeToday; // in minutes
+  final int totalFocusTimeToday; 
   final int totalSessionsToday;
 
   AnalyticsState copyWith({

@@ -11,7 +11,6 @@ class SettingsCubit extends Cubit<SettingsState> {
       : _settingsService = settingsService ?? SettingsService(),
         super(const SettingsState());
 
-  // Called when the screen loads
   Future<void> loadSettings() async {
     final workDuration = await _settingsService.getWorkDuration();
     final breakDuration = await _settingsService.getBreakDuration();
@@ -21,13 +20,11 @@ class SettingsCubit extends Cubit<SettingsState> {
     ));
   }
 
-  // Called when the user changes the work duration
   Future<void> setWorkDuration(int duration) async {
     await _settingsService.setWorkDuration(duration);
     emit(state.copyWith(workDuration: duration));
   }
 
-  // Called when the user changes the break duration
   Future<void> setBreakDuration(int duration) async {
     await _settingsService.setBreakDuration(duration);
     emit(state.copyWith(breakDuration: duration));

@@ -28,7 +28,6 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   }
 
   void _calculateStats(List<Session> sessions) {
-    // Get the start of today
     final now = DateTime.now();
     final today = DateUtils.dateOnly(now);
 
@@ -38,18 +37,16 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     for (final session in sessions) {
       final sessionDate = DateUtils.dateOnly(session.timestamp);
       
-      // Check if the session was today
       if (sessionDate.isAtSameMomentAs(today)) {
         timeToday += session.durationInSeconds;
         sessionsToday++;
       }
     }
 
-    // Emit the new state with calculated stats
     emit(state.copyWith(
       status: AnalyticsStatus.success,
       totalSessionsToday: sessionsToday,
-      totalFocusTimeToday: (timeToday / 60).floor(), // Convert to minutes
+      totalFocusTimeToday: (timeToday / 60).floor(), 
     ));
   }
 

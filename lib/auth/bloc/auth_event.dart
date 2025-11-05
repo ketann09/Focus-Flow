@@ -7,11 +7,8 @@ abstract class AuthEvent extends Equatable {
   List<Object> get props => [];
 }
 
-// Fired when the app starts to check auth status
 class AppStarted extends AuthEvent {}
 
-// Fired when the user successfully logs in
 class LoggedIn extends AuthEvent {}
 
-// Fired when the user logs out
 class LoggedOut extends AuthEvent {}

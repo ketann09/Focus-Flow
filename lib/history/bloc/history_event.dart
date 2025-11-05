@@ -7,10 +7,8 @@ abstract class HistoryEvent extends Equatable {
   List<Object> get props => [];
 }
 
-// Event to tell the BLoC to start loading the sessions
 class LoadHistory extends HistoryEvent {}
 
-// Internal event (like in TaskBloc) to update the state with new sessions
 class _HistoryUpdated extends HistoryEvent {
   final List<Session> sessions;
 

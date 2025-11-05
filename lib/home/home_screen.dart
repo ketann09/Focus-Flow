@@ -4,8 +4,6 @@ import 'package:focus_flow/screens/tasks_screen.dart';
 import 'package:focus_flow/screens/settings_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focus_flow/auth/bloc/auth_bloc.dart';
-import 'package:focus_flow/screens/history_screen.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:focus_flow/screens/dashboard_screen.dart';
 
 class HomeScreen extends StatefulWidget {

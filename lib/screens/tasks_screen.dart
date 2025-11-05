@@ -108,7 +108,7 @@ class _TasksViewState extends State<TasksView> {
                           color: Colors.red,
                           alignment: Alignment.centerRight,
                           padding: const EdgeInsets.symmetric(horizontal:20 ),
-                          child: const Icon(Iconsax.profile_delete, color: Colors.red),
+                          child: const Icon(Iconsax.profile_delete, color: Colors.white),
                         ) ,
                         child: CheckboxListTile(
                           title: Text(

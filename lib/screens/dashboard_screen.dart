@@ -3,14 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focus_flow/analytics/cubit/analytics_cubit.dart';
 import 'package:focus_flow/history/bloc/history_bloc.dart';
 import 'package:focus_flow/repositories/session_repository.dart';
-import 'package:focus_flow/screens/history_screen.dart'; // We'll reuse this!
+import 'package:focus_flow/screens/history_screen.dart'; 
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // We'll provide both BLoCs needed for this screen
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -38,10 +37,8 @@ class DashboardView extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // --- 1. Analytics Header ---
           _buildAnalyticsHeader(context),
           
-          // --- 2. History List ---
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -49,8 +46,6 @@ class DashboardView extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
           ),
-          // We'll reuse the HistoryView, but only its list part.
-          // For simplicity, we just embed the whole HistoryView for now.
           const Expanded(child: HistoryView()),
         ],
       ),
@@ -64,7 +59,6 @@ class DashboardView extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         
-        // We have stats, show them
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(

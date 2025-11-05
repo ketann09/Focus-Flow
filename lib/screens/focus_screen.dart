@@ -10,9 +10,8 @@ class FocusScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => TimerBloc(
-        
         sessionRepository: RepositoryProvider.of<SessionRepository>(context),
-      )..add(TimerReset()), 
+      )..add(TimerReset()),
       child: const FocusView(),
     );
   }
@@ -34,11 +33,20 @@ class FocusView extends StatelessWidget {
         builder: (context, state) {
           final duration = state.duration;
           final status = state.status;
+          final pomodoroStatus = state.pomodoroStatus;
 
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Center(
+                child:Text(
+                  pomodoroStatus==PomodoroStatus.work?'Focus Time':'Break Time',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ),
+
+              const SizedBox(height: 16),
               Center(
                 child: Text(
                   _formatDuration(duration),
@@ -86,8 +94,8 @@ class FocusView extends StatelessWidget {
 
                   if (status == TimerStatus.running ||
                       status == TimerStatus.paused)
-                    const SizedBox(width: 56), 
-                  
+                    const SizedBox(width: 56),
+
                   if (status == TimerStatus.finished)
                     FloatingActionButton(
                       onPressed: () =>
@@ -102,4 +110,4 @@ class FocusView extends StatelessWidget {
       ),
     );
   }
-} 
+}

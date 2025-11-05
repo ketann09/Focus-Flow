@@ -1,16 +1,14 @@
 part of 'settings_cubit.dart';
 
-// A single state class to hold our settings values
 class SettingsState extends Equatable {
   final int workDuration;
   final int breakDuration;
 
   const SettingsState({
-    this.workDuration = 25, // Default value
-    this.breakDuration = 5,   // Default value
+    this.workDuration = 25, 
+    this.breakDuration = 5,  
   });
 
-  // copyWith allows us to create a new state with modified values
   SettingsState copyWith({
     int? workDuration,
     int? breakDuration,
