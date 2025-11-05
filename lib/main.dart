@@ -7,6 +7,7 @@ import 'package:focus_flow/repositories/session_repository.dart';
 import 'firebase_options.dart';
 import 'package:focus_flow/auth/screens/login_screen.dart';
 import 'package:focus_flow/repositories/task_repository.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 void main() async {
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
             ),
 
             // Define text styles
-            textTheme: TextTheme(
+            textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme).copyWith(
               headlineLarge: TextStyle(
                 color: darkTextColor,
                 fontWeight: FontWeight.bold,
