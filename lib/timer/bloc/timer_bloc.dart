@@ -13,8 +13,8 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
   final SettingsService _settingsService;
   final SessionRepository _sessionRepository;
   StreamSubscription<int>? _tickerSubscription;
-  int _initialWorkDuration = 25 * 60;
-  int _initialBreakDuration = 5 * 60;
+  int initialWorkDuration = 25 * 60;
+  int initialBreakDuration = 5 * 60;
 
   static const int _tickDuration = 1;
   Stream<int> _tick() {
@@ -37,8 +37,8 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
   }
 
   Future<void> _loadDuration() async {
-    _initialWorkDuration = (await _settingsService.getWorkDuration()) * 60;
-    _initialBreakDuration = (await _settingsService.getBreakDuration()) * 60;
+    initialWorkDuration = (await _settingsService.getWorkDuration()) * 60;
+    initialBreakDuration = (await _settingsService.getBreakDuration()) * 60;
     if (state.pomodoroStatus == PomodoroStatus.work) {
       add(TimerReset());
     }
@@ -78,7 +78,7 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
       TimerState(
         status: TimerStatus.initial,
         pomodoroStatus: PomodoroStatus.work,
-        duration: _initialWorkDuration,
+        duration: initialWorkDuration,
       ),
     );
   }
@@ -94,12 +94,12 @@ void _onTicked(_TimerTicked event, Emitter<TimerState> emit) {
         if (state.pomodoroStatus == PomodoroStatus.work) {
          // --- WORK FINISHED ---
          // 1. Log the completed work session
-         _logSession(_initialWorkDuration);
+         _logSession(initialWorkDuration);
 
          // 2. Emit a new state to prepare for the break
          emit(state.copyWith(
            pomodoroStatus: PomodoroStatus.breakTime,
-           duration: _initialBreakDuration,
+           duration: initialBreakDuration,
          ));
 
          // 3. Automatically start the break timer
@@ -110,7 +110,7 @@ void _onTicked(_TimerTicked event, Emitter<TimerState> emit) {
          // 1. Emit a new state to prepare for work
          emit(state.copyWith(
            pomodoroStatus: PomodoroStatus.work,
-           duration: _initialWorkDuration,
+           duration: initialWorkDuration,
          ));
 
          // 2. Automatically start the work timer

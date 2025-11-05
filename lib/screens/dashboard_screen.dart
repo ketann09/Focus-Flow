@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focus_flow/analytics/cubit/analytics_cubit.dart';
 import 'package:focus_flow/history/bloc/history_bloc.dart';
 import 'package:focus_flow/repositories/session_repository.dart';
-import 'package:focus_flow/screens/history_screen.dart'; 
+import 'package:focus_flow/screens/history_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -37,8 +37,10 @@ class DashboardView extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // --- 1. Analytics Header ---
           _buildAnalyticsHeader(context),
-          
+
+          // --- 2. History List ---
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -46,6 +48,7 @@ class DashboardView extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
           ),
+          // We embed the HistoryView, which is fine for now.
           const Expanded(child: HistoryView()),
         ],
       ),
@@ -56,27 +59,38 @@ class DashboardView extends StatelessWidget {
     return BlocBuilder<AnalyticsCubit, AnalyticsState>(
       builder: (context, state) {
         if (state.status != AnalyticsStatus.success) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+              child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: CircularProgressIndicator(),
+          ));
         }
-        
+
+        // We have stats, show them
         return Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildStatCard(
-                context,
-                title: 'Sessions Today',
-                value: state.totalSessionsToday.toString(),
-                icon: Icons.check_circle_outline,
-                color: Colors.green,
+              // Use Expanded to make cards fill the space
+              Expanded(
+                child: _buildStatCard(
+                  context,
+                  title: 'Sessions Today',
+                  value: state.totalSessionsToday.toString(),
+                  icon: Icons.check_circle_outline,
+                  color: Colors.green,
+                ),
               ),
-              _buildStatCard(
-                context,
-                title: 'Minutes Today',
-                value: state.totalFocusTimeToday.toString(),
-                icon: Icons.timer,
-                color: Colors.blue,
+              const SizedBox(width: 16), // Add spacing
+              Expanded(
+                child: _buildStatCard(
+                  context,
+                  title: 'Minutes Today',
+                  value: state.totalFocusTimeToday.toString(),
+                  icon: Icons.timer,
+                  color: Colors.blue,
+                ),
               ),
             ],
           ),
@@ -92,6 +106,9 @@ class DashboardView extends StatelessWidget {
     required IconData icon,
     required Color color,
   }) {
+    final theme = Theme.of(context);
+    
+    // Use the CardTheme we defined in main.dart
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -101,9 +118,11 @@ class DashboardView extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               value,
-              style: Theme.of(context).textTheme.headlineMedium,
+              // Use the theme's text style
+              style: theme.textTheme.headlineMedium,
             ),
-            Text(title),
+            // Use the theme's body text style
+            Text(title, style: theme.textTheme.bodyMedium),
           ],
         ),
       ),

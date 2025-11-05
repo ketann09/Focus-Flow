@@ -20,6 +20,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color primaryColor = Colors.teal; 
+    final Color backgroundColor = Color(0xfff0f4f8);
+    final Color darkTextColor = Color(0xff1a252f); 
     return BlocProvider(
       create: (context) => AuthBloc()..add(AppStarted()),
 
@@ -32,8 +35,90 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           title: 'FocusFlow',
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
             useMaterial3: true,
+            primaryColor: primaryColor,
+            scaffoldBackgroundColor: backgroundColor,
+            
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: primaryColor,
+              brightness: Brightness.light,
+              surface: backgroundColor,
+              primary: primaryColor,
+            ),
+
+            // Define text styles
+            textTheme: TextTheme(
+              headlineLarge: TextStyle(
+                color: darkTextColor,
+                fontWeight: FontWeight.bold,
+              ),
+              headlineMedium: TextStyle(
+                color: darkTextColor,
+                fontWeight: FontWeight.bold,
+              ),
+              headlineSmall: TextStyle(
+                color: darkTextColor,
+                fontWeight: FontWeight.bold,
+              ),
+              bodyMedium: TextStyle(
+                color: darkTextColor.withAlpha(204),
+                fontSize: 16,
+              ),
+            ),
+
+            // Define button themes
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+
+            // Define input field themes
+            inputDecorationTheme: InputDecorationTheme(
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              labelStyle: TextStyle(color: darkTextColor.withAlpha(153)),
+            ),
+
+            // Define card themes
+            cardTheme: CardThemeData(
+              color: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+
+            // Define bottom nav bar theme
+            bottomNavigationBarTheme: BottomNavigationBarThemeData(
+              backgroundColor: Colors.white,
+              selectedItemColor: primaryColor,
+              unselectedItemColor: Colors.grey[400],
+              type: BottomNavigationBarType.fixed,
+              elevation: 0,
+            ),
+
+            // Define app bar theme
+            appBarTheme: AppBarTheme(
+              backgroundColor: backgroundColor,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              iconTheme: IconThemeData(color: darkTextColor),
+              titleTextStyle: TextStyle(
+                color: darkTextColor,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           debugShowCheckedModeBanner: false,
           home: const AuthWrapper(),
